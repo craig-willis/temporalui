@@ -36,6 +36,7 @@
 					<tr>
 						<g:sortableColumn property="name" title="${message(code: 'query.name.label', default: 'Name')}" />					
 						<g:sortableColumn property="title" title="${message(code: 'query.title.label', default: 'Title')}" />					
+						<g:sortableColumn property="status" title="${message(code: 'query.status.label', default: 'Status')}" />					
 					</tr>
 				</thead>
 				<tbody>
@@ -43,6 +44,9 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">	
 						<td><g:link controller="queries" action="show" id="${query.id}">${fieldValue(bean: query, field: "number")}</g:link></td>
 						<td>${fieldValue(bean: query, field: "title")}</td>
+						<td>
+							${userQueries.contains(query.id) ? "Done" : "Not Done" }
+						</td>
 					</tr>
 				</g:each>
 				</tbody>

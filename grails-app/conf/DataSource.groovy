@@ -1,8 +1,10 @@
 dataSource {
     pooled = false
    	driverClassName = "com.mysql.jdbc.Driver"
-    username = "mefron"
-    password =  "m11los"
+//    username = "mefron"
+//    password =  "m11los"
+    username = "root"
+    password =  ""
     dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
 }
 hibernate {

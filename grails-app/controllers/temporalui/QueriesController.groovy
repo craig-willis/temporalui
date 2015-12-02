@@ -30,9 +30,13 @@ class QueriesController {
 			// queries.addAll(TrecQuery.findAllByGroup(queryGroup))
 			//}
 			
+			def userQueries = UserQuery.findByUser(user)
+			Set<Long> queryIds = new HashSet<Long>()			
+			for (UserQuery userQuery: userQueries) {
+				queryIds.add(userQuery.query.id)
+			}
 			
-
-			[queryList: queries, querySize: queries.size(), queryGroup: queryGroup.id]
+			[queryList: queries, querySize: queries.size(), queryGroup: queryGroup.id, userQueries: queryIds]
 		}
 		else
 		{
@@ -49,7 +53,7 @@ class QueriesController {
 		
 		def userQuery = UserQuery.findByUserAndQuery(user, query)
 		
-		[queryInstance: query, collections: collections, userQuery: userQuery]
+		[queryInstance: query, collections: collections, userQuery: userQuery, queryGroup: queryGroup]
 	}
 	
 	def search(Long id) {
@@ -74,10 +78,10 @@ class QueriesController {
 			result.setDocid(hit.getDocID());
 			result.setCollectionId(collection.id);
 			
-			def text = index.getDocText(hit.getDocID());
+			/*def text = index.getDocText(hit.getDocID());
 			if (text.length() > 300) {
 				text = text.substring(0, 300);
-			}
+			}*/
 			result.setSnippet(hit.getSnippet())			
 			results.add(result)
 		}
@@ -115,11 +119,13 @@ class QueriesController {
 			result.setScore(hit.getScore());
 			result.setDocid(hit.getDocID());
 			result.setCollectionId(collection.id);
+
 			def text = index.getDocText(hit.getDocID());
 			if (text.length() > 300) {
 				text = text.substring(0, 300);
 			}
 			result.setSnippet(text)
+			
 			results.add(result)
 		}
 		
@@ -130,11 +136,21 @@ class QueriesController {
 	def update(Long id) {
 		def query = TrecQuery.get(id)
 		def user = springSecurityService.getCurrentUser()
-		def notes = params.notes
 		def userQuery = UserQuery.findByUserAndQuery(user, query)
 		if (!userQuery)
 			userQuery = new UserQuery(user: user, query: query)
-		userQuery.setNotes(notes)
+		userQuery.setExplicitExpression(params.boolean("explicitExpression"))
+		userQuery.setEventDriven(params.boolean("eventDriven"))
+		if (params.numEvents)
+			userQuery.setNumEvents(params.int("numEvents"))
+		userQuery.setEventType(params.int("eventType"))
+		userQuery.setTemporality(params.int("temporality"))
+		userQuery.setRelQuadrant1(params.int("relQuadrant1"))
+		userQuery.setRelQuadrant2(params.int("relQuadrant2"))
+		userQuery.setRelQuadrant3(params.int("relQuadrant3"))
+		userQuery.setRelQuadrant4(params.int("relQuadrant4"))
+		userQuery.setEventDesc(params.eventDesc)
+		userQuery.setNotes(params.notes)
 		userQuery.save()
 		
 		redirect (controller: "queries", action: 'show', id: id+1)

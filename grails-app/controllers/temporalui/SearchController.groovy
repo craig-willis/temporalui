@@ -10,9 +10,11 @@ import edu.gslis.temporalui.TrecCollection
 
 class SearchController {
 
-    def index() {		
+    def index(long id) {		
+		
+		def query = params.query
 		def collections = TrecCollection.findAll() 
-		[collections: collections]
+		[collections: collections, collectionId: id, query: query]
 	}
 	
 	def results() {

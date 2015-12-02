@@ -7,10 +7,12 @@ class TrecQuery {
 	String description;
 	String narrative;
 	TrecQueryGroup group;
+	String url;
 
     static constraints = {
 		narrative(maxSize: 2048)
 		description(maxSize: 2048)
+		url nullable: true
     }
 	
 	static mapping = {
